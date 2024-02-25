@@ -57,4 +57,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./palworld-guard_$GOOS_$GOARCH.zip
           tag: ${{ github.ref }}
-          file_glob: true
+          file_glob: false
