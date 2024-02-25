@@ -31,12 +31,14 @@ func (p *Process) Start() error {
 	if err != nil {
 		return err
 	}
-	err = cron.AddTask("periodic", p.PeriodicRestartInterval, func() {
-		err := p.SoftShutdown("60", p.MaintenanceWarningMessage)
-		if err != nil {
-			log.WithField("err", err).Error("Soft shutdown failed")
-		}
-	})
+	if len(p.PeriodicRestartInterval) != 0 {
+		err = cron.AddTask("periodic", p.PeriodicRestartInterval, func() {
+			err := p.SoftShutdown("60", p.MaintenanceWarningMessage)
+			if err != nil {
+				log.WithField("err", err).Error("Soft shutdown failed")
+			}
+		})
+	}
 	if err != nil {
 		return err
 	}
