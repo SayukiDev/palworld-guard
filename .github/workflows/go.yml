@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |
           cd ./build
-          zip -9vr ../palworld-guard_$GOOS_$GOARCH.zip .
+          zip -9vr ../palworld-guard_"$GOOS"_"$GOARCH".zip .
           cd ..
 
       - name: Upload binaries to release
