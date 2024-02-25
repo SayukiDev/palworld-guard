@@ -47,7 +47,7 @@ func New(p string) *Config {
 		Process: &ProcessConfig{
 			GamePath:                  "/home/pal/Steam/steamapps/common/PalServer/PalServer.sh",
 			MemoryUsageThreshold:      97,
-			MaintenanceWarningMessage: "Memory_Not_Enough_The_Server_Will_Reboot",
+			MaintenanceWarningMessage: "The_Server_Will_Reboot",
 			PeriodicRestartInterval:   "0 6 * * *",
 			AutoBackupInterval:        "",
 			BackupPath:                "/home/pal/backup/",
