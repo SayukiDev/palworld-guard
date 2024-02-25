@@ -55,6 +55,6 @@ jobs:
         if: github.event_name == 'release'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./palworld-guard_$GOOS_$GOARCH.zip
+          file: ./palworld-guard*.zip
           tag: ${{ github.ref }}
-          file_glob: false
+          file_glob: true
