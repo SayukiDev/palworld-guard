@@ -1,0 +1,44 @@
+{
+  //ログレベル
+  "LogLevel": "info",
+
+  "Process": {
+
+    // サーバープログラムのメインファイルの位置
+    "GamePath": "/home/pal/Steam/steamapps/common/PalServer/PalServer.sh",
+
+    // ここの利用率数値超えたら再起動する、0はオフにする
+    "MemoryUsageThreshold": 97,
+
+    // 再起動する前にゲーム内チャットに送るメッセージ
+    "MaintenanceWarningMessage": "The_Server_Will_Reboot",
+
+    // 定期的再起動する周期、書き方は CRONフォーマット を調べてください
+    // デフォルトは毎日の六時に再起動する
+    "PeriodicRestartInterval":"0 6 * * *",
+
+    // サーバープログラムのコマンドパラメータ
+    "StartOptions": "EpicApp=PalServer -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
+  },
+  "Rcon": {
+
+    // Rcon機能のアドレス、デフォルトは127.0.0.1:25575
+    "Address": "127.0.0.1:25575",
+
+    // サーバーの管理者パスワード、デフォルトはなし
+    "AdminPassword": ""
+  },
+  "Discord": {
+
+    // ディスコードボット機能をオンにする、デフォルトはflase（オフ）
+    "Enable" : false,
+
+    // ディスコードボットのToken
+    "Token": "discord bot token",
+
+    // 管理者のディスコードユーザーネーム
+    "Masters": [
+      "discord_username",
+    ]
+  }
+}
