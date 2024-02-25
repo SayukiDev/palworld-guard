@@ -32,15 +32,21 @@ func (p *Process) Start() error {
 		return err
 	}
 	if len(p.PeriodicRestartInterval) != 0 {
-		err = cron.AddTask("periodic", p.PeriodicRestartInterval, func() {
+		err = cron.AddTask("reboot", p.PeriodicRestartInterval, func() {
 			err := p.SoftShutdown("60", p.MaintenanceWarningMessage)
 			if err != nil {
 				log.WithField("err", err).Error("Soft shutdown failed")
 			}
 		})
+		if err != nil {
+			return err
+		}
 	}
-	if err != nil {
-		return err
+	if len(p.AutoBackupInterval) != 0 {
+		err = cron.AddTask("backup", p.AutoBackupInterval, p.backup)
+		if err != nil {
+			return err
+		}
 	}
 	p.lock.Lock()
 	defer p.lock.Unlock()
@@ -87,6 +93,9 @@ func (p *Process) Close() error {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 	p.running = false
+	cron.DelTask("reboot")
+	cron.DelTask("memory")
+	cron.DelTask("backup")
 	if p.cmd == nil {
 		return nil
 	}

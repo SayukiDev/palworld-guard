@@ -21,6 +21,8 @@ type ProcessConfig struct {
 	MemoryUsageThreshold      float64 `json:"MemoryUsageThreshold"`
 	MaintenanceWarningMessage string  `json:"MaintenanceWarningMessage"`
 	PeriodicRestartInterval   string  `json:"PeriodicRestartInterval"` // crontab format
+	AutoBackupInterval        string  `json:"AutoBackupInterval"`
+	BackupPath                string  `json:"BackupPath"`
 	Options                   string  `json:"StartOptions"`
 }
 
@@ -47,6 +49,8 @@ func New(p string) *Config {
 			MemoryUsageThreshold:      97,
 			MaintenanceWarningMessage: "Memory_Not_Enough_The_Server_Will_Reboot",
 			PeriodicRestartInterval:   "0 6 * * *",
+			AutoBackupInterval:        "",
+			BackupPath:                "/home/pal/backup/",
 			Options:                   "EpicApp=PalServer -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
 		},
 		Discord: &DiscordConfig{

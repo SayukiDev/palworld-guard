@@ -17,6 +17,13 @@
     // デフォルトは毎日の六時に再起動する
     "PeriodicRestartInterval":"0 6 * * *",
 
+    // バックアップする周期
+    // デフォルトはなし（オフ）
+    "AutoBackupInterval": "",
+
+    // バックアップファイルの保存位置
+    "BackupPath": "/home/pal/backup/",
+
     // サーバープログラムのコマンドパラメータ
     "StartOptions": "EpicApp=PalServer -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
   },
