@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-
 	log.SetFormatter(&prefixed.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: time.DateTime,
