@@ -35,7 +35,7 @@ func (p *Process) memoryChecker() {
 	log.Info("Memory over, restart server after 60s")
 	// Shutdown
 	err = p.SoftShutdown(
-		"60",
+		60,
 		fmt.Sprintf("Memory_Is_Above_%v%%", p.MemoryUsageThreshold),
 		p.MaintenanceWarningMessage,
 	)

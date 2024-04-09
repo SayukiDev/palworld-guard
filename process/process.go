@@ -4,7 +4,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os/exec"
-	"palworld-guard/common/rcon"
+	"palworld-guard/common/rest"
 	"palworld-guard/config"
 	"palworld-guard/cron"
 	"sync"
@@ -14,14 +14,14 @@ type Process struct {
 	cmd     *exec.Cmd
 	running bool
 	lock    sync.RWMutex
-	rconC   *config.RconConfig
+	api     *rest.Rest
 	*config.ProcessConfig
 }
 
-func New(c *config.ProcessConfig, rconC *config.RconConfig) *Process {
+func New(c *config.ProcessConfig, api *rest.Rest) *Process {
 	return &Process{
 		ProcessConfig: c,
-		rconC:         rconC,
+		api:           api,
 		running:       false,
 	}
 }
@@ -33,7 +33,7 @@ func (p *Process) Start() error {
 	}
 	if len(p.PeriodicRestartInterval) != 0 {
 		err = cron.AddTask("reboot", p.PeriodicRestartInterval, func() {
-			err := p.SoftShutdown("60", p.MaintenanceWarningMessage)
+			err := p.SoftShutdown(60, p.MaintenanceWarningMessage)
 			if err != nil {
 				log.WithField("err", err).Error("Soft shutdown failed")
 			}
@@ -55,21 +55,16 @@ func (p *Process) Start() error {
 	return nil
 }
 
-func (p *Process) SoftShutdown(sec string, msg ...string) error {
-	rcon, err := rcon.NewPalRcon(p.rconC.Addr, p.rconC.AdminPassword)
-	if err != nil {
-		return fmt.Errorf("connect to rcon error: %w", err)
-	}
-	defer rcon.Close()
+func (p *Process) SoftShutdown(sec int, msg ...string) error {
 	for _, s := range msg {
-		rcon.Broadcast(s)
+		_ = p.api.AnnounceMessage(s)
 	}
-	ps, err := rcon.ShowPlayers()
+	ps, err := p.api.GetPlayerList()
 	if err != nil {
 		log.WithField("err", err).Warning("List players failed")
 	} else {
-		for _, player := range ps {
-			err := rcon.KickPlayer(player.Id)
+		for _, player := range ps.Players {
+			err := p.api.KickPlayer(player.Userid, "The server will be reboot")
 			if err != nil {
 				log.WithFields(map[string]interface{}{
 					"player": player.Name,
@@ -78,11 +73,11 @@ func (p *Process) SoftShutdown(sec string, msg ...string) error {
 			}
 		}
 	}
-	err = rcon.Save()
+	err = p.api.SaveWorld()
 	if err != nil {
 		return fmt.Errorf("save data error: %w", err)
 	}
-	err = rcon.Shutdown(sec, "Reboot_In_60_Seconds")
+	err = p.api.ShutdownServer(sec, "Reboot_In_60_Seconds")
 	if err != nil {
 		return fmt.Errorf("shutdown error: %w", err)
 	}

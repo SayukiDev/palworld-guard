@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
+	github.com/go-resty/resty/v2 v2.12.0
 	github.com/gorcon/rcon v1.3.5
 	github.com/mholt/archiver/v4 v4.0.0-alpha.8
 	github.com/robfig/cron/v3 v3.0.1
@@ -42,8 +43,9 @@ require (
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect
-	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
+	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )

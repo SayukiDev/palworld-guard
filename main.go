@@ -5,6 +5,7 @@ import (
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"os"
 	"os/signal"
+	"palworld-guard/common/rest"
 	"palworld-guard/config"
 	"palworld-guard/cron"
 	"palworld-guard/discord"
@@ -36,13 +37,14 @@ func main() {
 	case "error":
 		log.SetLevel(log.ErrorLevel)
 	}
+	api := rest.New(c.Rcon.Addr, c.Rcon.AdminPassword)
 	log.Info("Staring guard...")
-	p := process.New(c.Process, c.Rcon)
+	p := process.New(c.Process, api)
 	_ = p.Start()
 	log.Info("Guard started.")
 	if c.Discord.Enable {
 		log.Info("Starting Discord...")
-		d, err := discord.New(c.Discord, c.Rcon)
+		d, err := discord.New(c.Discord, api)
 		if err != nil {
 			log.WithField("err", err).Error("Init Discord failed")
 			return

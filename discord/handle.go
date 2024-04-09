@@ -6,7 +6,6 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
 	log "github.com/sirupsen/logrus"
-	"palworld-guard/common/rcon"
 	"time"
 )
 
@@ -41,24 +40,18 @@ func (d *Discord) restartHandle(_ *discordgo.Session, i *discordgo.InteractionCr
 			return
 		}
 	}()
-	rcon, err := rcon.NewPalRcon(d.rconC.Addr, d.rconC.AdminPassword)
-	if err != nil {
-		log.WithField("err", err).Error("connect to rcon failed")
-		msg = "失敗しました"
-		return
-	}
-	defer rcon.Close()
-	rcon.Broadcast("The_Server_Will_Reboot")
-	ps, err := rcon.ShowPlayers()
+	a := d.api
+	_ = a.AnnounceMessage("The_Server_Will_Reboot")
+	ps, err := a.GetPlayerList()
 	if err != nil {
 		log.WithField("err", err).Warning("List players failed")
 	} else {
-		for _, player := range ps {
-			rcon.KickPlayer(player.Id)
+		for _, player := range ps.Players {
+			a.KickPlayer(player.Userid, "The server will be reboot")
 		}
 	}
-	rcon.Save()
-	rcon.Shutdown("10", "Reboot_In_10_Seconds")
+	a.SaveWorld()
+	a.ShutdownServer(10, "Reboot_In_10_Seconds")
 	msg = "サーバーが十秒後に再起動します"
 }
 
@@ -85,24 +78,21 @@ func (d *Discord) listPlayersHandle(_ *discordgo.Session, i *discordgo.Interacti
 			return
 		}
 	}()
-	rcon, err := rcon.NewPalRcon(d.rconC.Addr, d.rconC.AdminPassword)
-	if err != nil {
-		log.WithField("err", err).Error("Connect to rcon failed")
-		msg = "失敗しました"
-		return
-	}
-	defer rcon.Close()
-	ps, err := rcon.ShowPlayers()
+	a := d.api
+	ps, err := a.GetPlayerList()
 	if err != nil {
 		log.WithField("err", err).Warning("List players failed")
 		msg = "失敗しました"
 		return
 	}
-	msg = fmt.Sprintf("今ログインしてるプレイヤーは%d人です", len(ps))
-	if len(ps) > 0 {
+	msg = fmt.Sprintf("今ログインしてるプレイヤーは%d人です", len(ps.Players))
+	if len(ps.Players) > 0 {
 		msg += "\n\n----------------\n"
-		for _, p := range ps {
-			msg += fmt.Sprintf("名前: %s Id: %s\n", p.Name, p.Id)
+		for _, p := range ps.Players {
+			msg += fmt.Sprintf("名前: %s Id: %s\n座標: X %.2f Y%.2f\nレベル: %d\n",
+				p.Name, p.Userid,
+				p.LocationX, p.LocationY,
+				p.Level)
 		}
 		msg += "----------------"
 	}

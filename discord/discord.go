@@ -2,17 +2,18 @@ package discord
 
 import (
 	dis "github.com/bwmarrin/discordgo"
+	"palworld-guard/common/rest"
 	"palworld-guard/config"
 )
 
 type Discord struct {
 	s              *dis.Session
 	masters        []string
-	rconC          *config.RconConfig
+	api            *rest.Rest
 	commandHandles map[string]func(s *dis.Session, i *dis.InteractionCreate)
 }
 
-func New(c *config.DiscordConfig, rcon *config.RconConfig) (*Discord, error) {
+func New(c *config.DiscordConfig, api *rest.Rest) (*Discord, error) {
 	d, err := dis.New("Bot " + c.Token)
 	if err != nil {
 		return nil, err
@@ -23,7 +24,7 @@ func New(c *config.DiscordConfig, rcon *config.RconConfig) (*Discord, error) {
 	return &Discord{
 		masters: c.Masters,
 		s:       d,
-		rconC:   rcon,
+		api:     api,
 	}, nil
 }
 
