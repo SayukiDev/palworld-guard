@@ -10,11 +10,8 @@ jobs:
       contents: write
     strategy:
       matrix:
-        goos: [windows, linux, darwin]
+        goos: [windows, linux]
         goarch: [amd64, 386]
-        exclude:
-          - goarch: 386
-            goos: darwin
       fail-fast: false
 
     runs-on: ubuntu-latest
